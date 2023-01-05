@@ -66,7 +66,7 @@ public class GroupingsRestControllerv2_1Test {
     private String RELEASED_GROUPING;
 
     @Value("${groupings.api.current_user}")
-    private String CURRENT_USER;
+    private String CURRENT_USER_KEY;
 
     @Value("${groupings.api.success}")
     private String SUCCESS;
@@ -225,7 +225,7 @@ public class GroupingsRestControllerv2_1Test {
 
         given(groupingAssignmentService.adminLists("bobo")).willReturn(adminListsHolder);
         mockMvc.perform(get(API_BASE + "/admins-and-groupings")
-                        .header(CURRENT_USER, "bobo"))
+                        .header(CURRENT_USER_KEY, "bobo"))
                 .andExpect(status().isOk())
                 .andExpect(jsonPath("allGroupingPaths[0].name").value("grouping0"))
                 .andExpect(jsonPath("allGroupingPaths[1].name").value("grouping1"))
@@ -246,7 +246,7 @@ public class GroupingsRestControllerv2_1Test {
         GroupingsAddResult addMemberResult = new GroupingsAddResult();
         given(membershipService.addAdmin(ADMIN, adminToAdd)).willReturn(addMemberResult);
         mockMvc.perform(post(API_BASE + "/admins/" + adminToAdd)
-                        .header(CURRENT_USER, ADMIN))
+                        .header(CURRENT_USER_KEY, ADMIN))
                 .andExpect(status().isOk());
         verify(membershipService, times(1))
                 .addAdmin(ADMIN, adminToAdd);
@@ -260,7 +260,7 @@ public class GroupingsRestControllerv2_1Test {
                 .willReturn(removeMemberResult);
 
         mockMvc.perform(delete(API_BASE + "/admins/" + adminToRemove)
-                        .header(CURRENT_USER, ADMIN))
+                        .header(CURRENT_USER_KEY, ADMIN))
                 .andExpect(status().isOk());
 
         verify(membershipService, times(1))
@@ -277,7 +277,7 @@ public class GroupingsRestControllerv2_1Test {
         String userToRemove = "userToRemove";
         given(membershipService.removeFromGroups(ADMIN, userToRemove, paths)).willReturn(removeMemberResults);
         MvcResult result = mockMvc.perform(delete(API_BASE + "/admins/" + String.join(",", paths) + "/" + userToRemove)
-                        .header(CURRENT_USER, ADMIN))
+                        .header(CURRENT_USER_KEY, ADMIN))
                 .andExpect(status().isOk())
                 .andReturn();
         assertNotNull(result);
@@ -302,7 +302,7 @@ public class GroupingsRestControllerv2_1Test {
                 mockMvc.perform(
                                 delete(API_BASE + "/groupings/grouping/" + includePathsStr + "/" + excludePathsStr
                                         + "/reset-group")
-                                        .header(CURRENT_USER, ADMIN))
+                                        .header(CURRENT_USER_KEY, ADMIN))
                         .andExpect(status().isOk())
                         .andReturn();
         assertNotNull(result);
@@ -312,13 +312,13 @@ public class GroupingsRestControllerv2_1Test {
     @Test
     public void memberAttributesTest() throws Exception {
         MvcResult validResult = mockMvc.perform(get(API_BASE + "/members/i0-uuid")
-                        .header(CURRENT_USER, "0o0-username"))
+                        .header(CURRENT_USER_KEY, "0o0-username"))
                 .andExpect(status().isOk())
                 .andReturn();
         assertThat(validResult, notNullValue());
 
         MvcResult invalidResult = mockMvc.perform(get(API_BASE + "/members/<h1>hello<h1>")
-                        .header(CURRENT_USER, "0o0-username"))
+                        .header(CURRENT_USER_KEY, "0o0-username"))
                 .andExpect(status().isOk())
                 .andReturn();
         assertThat(invalidResult, notNullValue());
@@ -331,7 +331,7 @@ public class GroupingsRestControllerv2_1Test {
 
         mockMvc.perform(
                         get(API_BASE + "/groupings/" + GROUPING + "?page=1&size=1&sortString=name&isAscending=true")
-                                .header(CURRENT_USER, USERNAME))
+                                .header(CURRENT_USER_KEY, USERNAME))
                 .andExpect(status().isOk()).andReturn();
 
         verify(groupingAssignmentService, times(1))
@@ -344,7 +344,7 @@ public class GroupingsRestControllerv2_1Test {
         given(membershipService.membershipResults(ADMIN, "iamtst01")).willReturn(memberships);
 
         mockMvc.perform(get(API_BASE + "/members/iamtst01/groupings")
-                        .header(CURRENT_USER, ADMIN))
+                        .header(CURRENT_USER_KEY, ADMIN))
                 .andExpect(status().isOk());
 
         verify(membershipService, times(1))
@@ -357,7 +357,7 @@ public class GroupingsRestControllerv2_1Test {
         given(membershipService.managePersonResults(ADMIN, "iamtst01")).willReturn(results);
 
         mockMvc.perform(get(API_BASE + "/members/iamtst01/groupings/all")
-                        .header(CURRENT_USER, ADMIN))
+                        .header(CURRENT_USER_KEY, ADMIN))
                 .andExpect(status().isOk());
 
         verify(membershipService, times(1))
@@ -369,7 +369,7 @@ public class GroupingsRestControllerv2_1Test {
         List<GroupingPath> optInGroupingPaths = new ArrayList<>();
         given(groupingAssignmentService.optInGroupingPaths(ADMIN, "iamtst01")).willReturn(optInGroupingPaths);
         mockMvc.perform(get(API_BASE + "/groupings/members/iamtst01/opt-in-groups")
-                        .header(CURRENT_USER, ADMIN))
+                        .header(CURRENT_USER_KEY, ADMIN))
                 .andExpect(status().isOk());
 
         verify(groupingAssignmentService, times(1))
@@ -408,7 +408,7 @@ public class GroupingsRestControllerv2_1Test {
         given(membershipService.addIncludeMembers(USERNAME, "grouping", usersToAdd))
                 .willReturn(addMemberResults);
         mockMvc.perform(put(API_BASE + "/groupings/grouping/include-members/")
-                        .header(CURRENT_USER, USERNAME)
+                        .header(CURRENT_USER_KEY, USERNAME)
                         .contentType(MediaType.APPLICATION_JSON)
                         .content(JsonUtil.asJson(usersToAdd)))
                 .andExpect(status().isOk());
@@ -428,7 +428,7 @@ public class GroupingsRestControllerv2_1Test {
                 .willReturn(addMemberResults);
 
         mockMvc.perform(put(API_BASE + "/groupings/grouping/exclude-members/")
-                        .header(CURRENT_USER, USERNAME)
+                        .header(CURRENT_USER_KEY, USERNAME)
                         .contentType(MediaType.APPLICATION_JSON)
                         .content(JsonUtil.asJson(usersToAdd)))
                 .andExpect(status().isOk());
@@ -447,7 +447,7 @@ public class GroupingsRestControllerv2_1Test {
         given(membershipService.removeIncludeMembers(USERNAME, "grouping", usersToRemove))
                 .willReturn(removeMemberResults);
         mockMvc.perform(delete(API_BASE + "/groupings/grouping/include-members/")
-                        .header(CURRENT_USER, USERNAME)
+                        .header(CURRENT_USER_KEY, USERNAME)
                         .contentType(MediaType.APPLICATION_JSON)
                         .content(JsonUtil.asJson(usersToRemove)))
                 .andExpect(status().isOk());
@@ -466,7 +466,7 @@ public class GroupingsRestControllerv2_1Test {
         given(membershipService.removeExcludeMembers(USERNAME, "grouping", usersToRemove))
                 .willReturn(removeMemberResults);
         mockMvc.perform(delete(API_BASE + "/groupings/grouping/exclude-members/")
-                        .header(CURRENT_USER, USERNAME)
+                        .header(CURRENT_USER_KEY, USERNAME)
                         .contentType(MediaType.APPLICATION_JSON)
                         .content(JsonUtil.asJson(usersToRemove)))
                 .andExpect(status().isOk());
@@ -488,7 +488,7 @@ public class GroupingsRestControllerv2_1Test {
         given(memberAttributeService.getOwnedGroupings(admin, uid))
                 .willReturn(groupingPathList);
         mockMvc.perform(get(API_BASE + "/owners/grouping/groupings")
-                        .header(CURRENT_USER, admin)).andExpect(status().isOk())
+                        .header(CURRENT_USER_KEY, admin)).andExpect(status().isOk())
                 .andExpect(jsonPath("$[0].path").value(path))
                 .andExpect(jsonPath("$[0].name").value("grouping"));
 
@@ -508,7 +508,7 @@ public class GroupingsRestControllerv2_1Test {
                 .willReturn(addMemberResultList);
 
         MvcResult result = mockMvc.perform(put(API_BASE + "/groupings/grouping/owners/" + String.join(",", ownersToAdd))
-                        .header(CURRENT_USER, USERNAME))
+                        .header(CURRENT_USER_KEY, USERNAME))
                 .andExpect(status().isOk())
                 .andReturn();
 
@@ -531,7 +531,7 @@ public class GroupingsRestControllerv2_1Test {
 
         MvcResult result =
                 mockMvc.perform(delete(API_BASE + "/groupings/grouping/owners/" + String.join(",", ownersToRemove))
-                                .header(CURRENT_USER, USERNAME))
+                                .header(CURRENT_USER_KEY, USERNAME))
                         .andExpect(status().isOk())
                         .andReturn();
         assertNotNull(result);
@@ -546,7 +546,7 @@ public class GroupingsRestControllerv2_1Test {
         given(groupAttributeService.updateDescription("grouping", USERNAME, "description")).willReturn(
                 groupingsServiceResult);
         MvcResult result = mockMvc.perform(put(API_BASE + "/groupings/grouping/description")
-                        .header(CURRENT_USER, USERNAME)
+                        .header(CURRENT_USER_KEY, USERNAME)
                         .content("description"))
                 .andExpect(status().isOk())
                 .andReturn();
@@ -577,7 +577,7 @@ public class GroupingsRestControllerv2_1Test {
 
         given(groupAttributeService.changeOptStatus(optInRequest, optOutRequest)).willReturn(gsrListIn());
         mockMvc.perform(put(API_BASE + "/groupings/grouping/preference/" + OptType.IN.value() + "/enable")
-                        .header(CURRENT_USER, USERNAME))
+                        .header(CURRENT_USER_KEY, USERNAME))
                 .andExpect(status().isOk())
                 .andExpect(jsonPath("$", hasSize(1)))
                 .andExpect(jsonPath("$[0].resultCode").value(SUCCESS))
@@ -602,7 +602,7 @@ public class GroupingsRestControllerv2_1Test {
 
         given(groupAttributeService.changeOptStatus(optInRequest, optOutRequest)).willReturn(gsrListOut());
         mockMvc.perform(put(API_BASE + "/groupings/grouping/preference/" + OptType.OUT.value() + "/disable")
-                        .header(CURRENT_USER, USERNAME))
+                        .header(CURRENT_USER_KEY, USERNAME))
                 .andExpect(status().isOk())
                 .andExpect(jsonPath("$", hasSize(1)))
                 .andExpect(jsonPath("$[0].resultCode").value(SUCCESS))
@@ -612,7 +612,7 @@ public class GroupingsRestControllerv2_1Test {
         given(groupAttributeService.changeGroupAttributeStatus("grouping", USERNAME, LISTSERV, true))
                 .willReturn(gsrListserv());
         mockMvc.perform(put(API_BASE + "/groupings/grouping/sync-destination/" + LISTSERV + "/enable")
-                        .header(CURRENT_USER, USERNAME))
+                        .header(CURRENT_USER_KEY, USERNAME))
                 .andExpect(status().isOk())
                 .andExpect(jsonPath("$.resultCode").value(SUCCESS))
                 .andExpect(jsonPath("$.action").value("listserv status changed"));
@@ -623,7 +623,7 @@ public class GroupingsRestControllerv2_1Test {
         given(groupAttributeService.changeGroupAttributeStatus("grouping", USERNAME, RELEASED_GROUPING, true))
                 .willReturn(gsrReleasedGrouping());
         mockMvc.perform(put(API_BASE + "/groupings/grouping/sync-destination/" + RELEASED_GROUPING + "/enable")
-                        .header(CURRENT_USER, USERNAME))
+                        .header(CURRENT_USER_KEY, USERNAME))
                 .andExpect(status().isOk())
                 .andExpect(jsonPath("$.resultCode").value(SUCCESS))
                 .andExpect(jsonPath("$.action").value("ldap status changed"));
@@ -638,7 +638,7 @@ public class GroupingsRestControllerv2_1Test {
                 .willReturn(sdList());
 
         mockMvc.perform(get(API_BASE + "/groupings/grouping/sync-destinations")
-                        .header(CURRENT_USER, USERNAME))
+                        .header(CURRENT_USER_KEY, USERNAME))
                 .andExpect(status().isOk());
 
         verify(groupAttributeService, times(1))
@@ -647,26 +647,26 @@ public class GroupingsRestControllerv2_1Test {
 
     @Test
     public void hasOwnerPrivsTest() throws Exception {
-        given(memberAttributeService.isOwner(CURRENT_USER)).willReturn(false);
+        given(memberAttributeService.isOwner(CURRENT_USER_KEY)).willReturn(false);
         MvcResult result = mockMvc.perform(get(API_BASE + "/owners")
-                        .header(CURRENT_USER, CURRENT_USER))
+                        .header(CURRENT_USER_KEY, CURRENT_USER_KEY))
                 .andExpect(status().isOk())
                 .andReturn();
         assertNotNull(result);
         verify(memberAttributeService, times(1))
-                .isOwner(CURRENT_USER);
+                .isOwner(CURRENT_USER_KEY);
     }
 
     @Test
     public void hasAdminPrivsTest() throws Exception {
-        given(memberAttributeService.isAdmin(CURRENT_USER)).willReturn(false);
+        given(memberAttributeService.isAdmin(CURRENT_USER_KEY)).willReturn(false);
         MvcResult result = mockMvc.perform(get(API_BASE + "/admins")
-                        .header(CURRENT_USER, CURRENT_USER))
+                        .header(CURRENT_USER_KEY, CURRENT_USER_KEY))
                 .andExpect(status().isOk())
                 .andReturn();
         assertNotNull(result);
         verify(memberAttributeService, times(1))
-                .isAdmin(CURRENT_USER);
+                .isAdmin(CURRENT_USER_KEY);
     }
 
     @Test
@@ -683,7 +683,7 @@ public class GroupingsRestControllerv2_1Test {
         given(memberAttributeService.numberOfGroupings(owner, uid)).willReturn(10);
 
         mockMvc.perform(get(API_BASE + "/owners/grouping/grouping")
-                        .header(CURRENT_USER, owner))
+                        .header(CURRENT_USER_KEY, owner))
                 .andExpect(status().isOk());
         verify(memberAttributeService, times(1))
                 .numberOfGroupings(owner, uid);
@@ -696,7 +696,7 @@ public class GroupingsRestControllerv2_1Test {
         // Check that regular member cannot change description
         MvcResult memberDescriptionResult =
                 mockMvc.perform(get(API_BASE + "/groupings/" + groupingTest.getPath() + "/description")
-                                .header(CURRENT_USER, "abc"))
+                                .header(CURRENT_USER_KEY, "abc"))
                         .andDo(print())
                         .andExpect(status().is4xxClientError())
                         .andReturn();
@@ -705,7 +705,7 @@ public class GroupingsRestControllerv2_1Test {
         // Admin should be able to change description
         MvcResult adminDescriptionResult =
                 mockMvc.perform(put(API_BASE + "/groupings/" + groupingTest.getPath() + "/description")
-                                .header(CURRENT_USER, "admin"))
+                                .header(CURRENT_USER_KEY, "admin"))
                         .andDo(print())
                         .andExpect(status().isOk())
                         .andReturn();
@@ -733,7 +733,7 @@ public class GroupingsRestControllerv2_1Test {
                 .willReturn(369);
 
         mockMvc.perform(get(API_BASE + "/groupings/members/" + uid + "/memberships")
-                        .header(CURRENT_USER, ADMIN))
+                        .header(CURRENT_USER_KEY, ADMIN))
                 .andExpect(status().isOk())
                 .andExpect(content().string("369"));
 
@@ -747,7 +747,7 @@ public class GroupingsRestControllerv2_1Test {
         String path = "grouping-path";
         given(groupingAssignmentService.isSoleOwner(ADMIN, path, uid)).willReturn(true);
         MvcResult mvcResult = mockMvc.perform(get(API_BASE + "/groupings/" + path + "/owners/" + uid)
-                        .header(CURRENT_USER, ADMIN))
+                        .header(CURRENT_USER_KEY, ADMIN))
                 .andExpect(status().isOk()).andReturn();
         assertNotNull(mvcResult);
         verify(groupingAssignmentService, times(1)).isSoleOwner(ADMIN, path, uid);
@@ -757,25 +757,25 @@ public class GroupingsRestControllerv2_1Test {
     public void regexTest() throws Exception {
         // Sending an 'unsafe character' in the URI should get rejected and return CLIENT_ERROR
         MvcResult result1 = mockMvc.perform(get(API_BASE + "/owners/" + USERNAME + "[" + "/groupings")
-                        .header(CURRENT_USER, USERNAME))
+                        .header(CURRENT_USER_KEY, USERNAME))
                 .andExpect(status().is4xxClientError())
                 .andReturn();
         assertThat(result1, notNullValue());
 
         MvcResult result2 = mockMvc.perform(get(API_BASE + "/owners/" + USERNAME + "^" + "/groupings")
-                        .header(CURRENT_USER, USERNAME))
+                        .header(CURRENT_USER_KEY, USERNAME))
                 .andExpect(status().is4xxClientError())
                 .andReturn();
         assertThat(result2, notNullValue());
 
         MvcResult result3 = mockMvc.perform(get(API_BASE + "/members/" + USERNAME + "}")
-                        .header(CURRENT_USER, USERNAME))
+                        .header(CURRENT_USER_KEY, USERNAME))
                 .andExpect(status().is4xxClientError())
                 .andReturn();
         assertThat(result3, notNullValue());
 
         MvcResult result4 = mockMvc.perform(get(API_BASE + "/members/" + USERNAME + "@")
-                        .header(CURRENT_USER, USERNAME))
+                        .header(CURRENT_USER_KEY, USERNAME))
                 .andExpect(status().is4xxClientError())
                 .andReturn();
         assertThat(result4, notNullValue());

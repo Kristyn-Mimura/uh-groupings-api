@@ -56,7 +56,7 @@ public class TestGroupingsRestControllerv2_1 {
     private String ADMIN;
 
     @Value("${groupings.api.current_user}")
-    private String CURRENT_USER;
+    private String CURRENT_USER_KEY;
 
     @Value("${groupings.api.test.grouping_many}")
     private String GROUPING;
@@ -127,7 +127,7 @@ public class TestGroupingsRestControllerv2_1 {
     @Test
     public void helloTest() throws Exception {
         MvcResult mvcResult = mockMvc.perform(get(API_BASE_URL)
-                        .header(CURRENT_USER, ADMIN))
+                        .header(CURRENT_USER_KEY, ADMIN))
                 .andExpect(status().isOk())
                 .andReturn();
         assertEquals("University of Hawaii Groupings", mvcResult.getResponse().getContentAsString());
@@ -137,7 +137,7 @@ public class TestGroupingsRestControllerv2_1 {
     public void adminsGroupingsTest() throws Exception {
         String url = API_BASE_URL + "admins-and-groupings";
         MvcResult mvcResult = mockMvc.perform(get(url)
-                        .header(CURRENT_USER, ADMIN))
+                        .header(CURRENT_USER_KEY, ADMIN))
                 .andExpect(status().isOk())
                 .andReturn();
         assertNotNull(new ObjectMapper().readValue(mvcResult.getResponse().getContentAsByteArray(),
@@ -148,7 +148,7 @@ public class TestGroupingsRestControllerv2_1 {
     public void addAdminTest() throws Exception {
         String url = API_BASE_URL + "admins/" + TEST_USERNAMES.get(0);
         MvcResult mvcResult = mockMvc.perform(post(url)
-                        .header(CURRENT_USER, ADMIN))
+                        .header(CURRENT_USER_KEY, ADMIN))
                 .andExpect(status().isOk())
                 .andReturn();
         assertNotNull(new ObjectMapper().readValue(mvcResult.getResponse().getContentAsByteArray(),
@@ -161,7 +161,7 @@ public class TestGroupingsRestControllerv2_1 {
         String url = API_BASE_URL + "admins/" + TEST_USERNAMES.get(0);
         membershipService.addAdmin(ADMIN, TEST_USERNAMES.get(0));
         MvcResult mvcResult = mockMvc.perform(delete(url)
-                        .header(CURRENT_USER, ADMIN))
+                        .header(CURRENT_USER_KEY, ADMIN))
                 .andExpect(status().isOk())
                 .andReturn();
         assertNotNull(new ObjectMapper().readValue(mvcResult.getResponse().getContentAsByteArray(),
@@ -181,7 +181,7 @@ public class TestGroupingsRestControllerv2_1 {
 
         String url = API_BASE_URL + "admins/" + String.join(",", pathList) + "/" + iamtst01List.get(0);
         MvcResult mvcResult = mockMvc.perform(delete(url)
-                        .header(CURRENT_USER, ADMIN))
+                        .header(CURRENT_USER_KEY, ADMIN))
                 .andExpect(status().isOk())
                 .andReturn();
         assertNotNull(new ObjectMapper().readValue(mvcResult.getResponse().getContentAsByteArray(), List.class));
@@ -202,7 +202,7 @@ public class TestGroupingsRestControllerv2_1 {
                 String.join(",", uhNumbersExclude) + "/reset-group";
 
         MvcResult mvcResult = mockMvc.perform(delete(url)
-                        .header(CURRENT_USER, ADMIN))
+                        .header(CURRENT_USER_KEY, ADMIN))
                 .andExpect(status().isOk())
                 .andReturn();
         assertNotNull(new ObjectMapper().readValue(mvcResult.getResponse().getContentAsByteArray(), List.class));
@@ -215,7 +215,7 @@ public class TestGroupingsRestControllerv2_1 {
     public void memberAttributesTest() throws Exception {
         String url = API_BASE_URL + "members/" + TEST_USERNAMES.get(0);
         MvcResult mvcResult = mockMvc.perform(get(url)
-                        .header(CURRENT_USER, ADMIN))
+                        .header(CURRENT_USER_KEY, ADMIN))
                 .andExpect(status().isOk())
                 .andReturn();
         assertNotNull(new ObjectMapper().readValue(mvcResult.getResponse().getContentAsByteArray(), Person.class));
@@ -225,14 +225,14 @@ public class TestGroupingsRestControllerv2_1 {
     public void getGroupingTest() throws Exception {
         String url = API_BASE_URL + "groupings/" + GROUPING + "?page=1&size=1&sortString=name&isAscending=true";
         MvcResult mvcResult = mockMvc.perform(get(url)
-                        .header(CURRENT_USER, ADMIN))
+                        .header(CURRENT_USER_KEY, ADMIN))
                 .andExpect(status().isOk())
                 .andReturn();
         assertNotNull(new ObjectMapper().readValue(mvcResult.getResponse().getContentAsByteArray(), Grouping.class));
 
         url = API_BASE_URL + "groupings/" + GROUPING + "?";
         mvcResult = mockMvc.perform(get(url)
-                        .header(CURRENT_USER, ADMIN))
+                        .header(CURRENT_USER_KEY, ADMIN))
                 .andExpect(status().is5xxServerError())
                 .andReturn();
     }
@@ -241,7 +241,7 @@ public class TestGroupingsRestControllerv2_1 {
     public void membershipResultsTest() throws Exception {
         String url = API_BASE_URL + "members/" + ADMIN + "/groupings";
         MvcResult mvcResult = mockMvc.perform(get(url)
-                        .header(CURRENT_USER, ADMIN))
+                        .header(CURRENT_USER_KEY, ADMIN))
                 .andExpect(status().isOk())
                 .andReturn();
         assertNotNull(new ObjectMapper().readValue(mvcResult.getResponse().getContentAsByteArray(), List.class));
@@ -251,7 +251,7 @@ public class TestGroupingsRestControllerv2_1 {
     public void getOptInGroupsTest() throws Exception {
         String url = API_BASE_URL + "groupings/members/" + TEST_USERNAMES.get(0) + "/opt-in-groups";
         MvcResult mvcResult = mockMvc.perform(get(url)
-                        .header(CURRENT_USER, ADMIN))
+                        .header(CURRENT_USER_KEY, ADMIN))
                 .andExpect(status().isOk())
                 .andReturn();
         assertNotNull(new ObjectMapper().readValue(mvcResult.getResponse().getContentAsByteArray(), List.class));
@@ -264,7 +264,7 @@ public class TestGroupingsRestControllerv2_1 {
 
         String url = API_BASE_URL + "groupings/" + GROUPING + "/include-members/" + iamtst01List.get(0) + "/self";
         MvcResult mvcResult = mockMvc.perform(put(url)
-                        .header(CURRENT_USER, ADMIN))
+                        .header(CURRENT_USER_KEY, ADMIN))
                 .andExpect(status().isOk())
                 .andReturn();
         assertNotNull(
@@ -282,7 +282,7 @@ public class TestGroupingsRestControllerv2_1 {
 
         String url = API_BASE_URL + "groupings/" + GROUPING + "/exclude-members/" + TEST_USERNAMES.get(0) + "/self";
         MvcResult mvcResult = mockMvc.perform(put(url)
-                        .header(CURRENT_USER, ADMIN))
+                        .header(CURRENT_USER_KEY, ADMIN))
                 .andExpect(status().isOk())
                 .andReturn();
         assertNotNull(
@@ -295,7 +295,7 @@ public class TestGroupingsRestControllerv2_1 {
     public void addIncludeMembersTest() throws Exception {
         String url = API_BASE_URL + "groupings/" + GROUPING + "/include-members/";
         MvcResult mvcResult = mockMvc.perform(put(url)
-                        .header(CURRENT_USER, ADMIN)
+                        .header(CURRENT_USER_KEY, ADMIN)
                         .contentType(MediaType.APPLICATION_JSON)
                         .content(JsonUtil.asJson(TEST_USERNAMES)))
                 .andExpect(status().isOk())
@@ -309,7 +309,7 @@ public class TestGroupingsRestControllerv2_1 {
     public void addExcludeMembersTest() throws Exception {
         String url = API_BASE_URL + "groupings/" + GROUPING + "/exclude-members/";
         MvcResult mvcResult = mockMvc.perform(put(url)
-                        .header(CURRENT_USER, ADMIN)
+                        .header(CURRENT_USER_KEY, ADMIN)
                         .contentType(MediaType.APPLICATION_JSON)
                         .content(JsonUtil.asJson(TEST_USERNAMES)))
                 .andExpect(status().isOk())
@@ -324,7 +324,7 @@ public class TestGroupingsRestControllerv2_1 {
         membershipService.addIncludeMembers(ADMIN, GROUPING, TEST_USERNAMES);
         String url = API_BASE_URL + "groupings/" + GROUPING + "/include-members/";
         MvcResult mvcResult = mockMvc.perform(delete(url)
-                        .header(CURRENT_USER, ADMIN)
+                        .header(CURRENT_USER_KEY, ADMIN)
                         .contentType(MediaType.APPLICATION_JSON)
                         .content(JsonUtil.asJson(TEST_USERNAMES)))
                 .andExpect(status().isOk())
@@ -339,7 +339,7 @@ public class TestGroupingsRestControllerv2_1 {
         membershipService.addExcludeMembers(ADMIN, GROUPING, TEST_USERNAMES);
         String url = API_BASE_URL + "groupings/" + GROUPING + "/exclude-members/";
         MvcResult mvcResult = mockMvc.perform(delete(url)
-                        .header(CURRENT_USER, ADMIN)
+                        .header(CURRENT_USER_KEY, ADMIN)
                         .contentType(MediaType.APPLICATION_JSON)
                         .content(JsonUtil.asJson(TEST_USERNAMES)))
                 .andExpect(status().isOk())
@@ -353,7 +353,7 @@ public class TestGroupingsRestControllerv2_1 {
     public void ownerGroupingsTest() throws Exception {
         String url = API_BASE_URL + "owners/" + ADMIN + "/groupings";
         MvcResult mvcResult = mockMvc.perform(get(url)
-                        .header(CURRENT_USER, ADMIN))
+                        .header(CURRENT_USER_KEY, ADMIN))
                 .andExpect(status().isOk())
                 .andReturn();
         assertNotNull(new ObjectMapper().readValue(mvcResult.getResponse().getContentAsByteArray(), List.class));
@@ -363,7 +363,7 @@ public class TestGroupingsRestControllerv2_1 {
     public void addOwnersTest() throws Exception {
         String url = API_BASE_URL + "groupings/" + GROUPING + "/owners/" + String.join(",", TEST_USERNAMES);
         MvcResult mvcResult = mockMvc.perform(put(url)
-                        .header(CURRENT_USER, ADMIN))
+                        .header(CURRENT_USER_KEY, ADMIN))
                 .andExpect(status().isOk())
                 .andReturn();
         assertNotNull(new ObjectMapper().readValue(mvcResult.getResponse().getContentAsByteArray(), List.class));
@@ -376,7 +376,7 @@ public class TestGroupingsRestControllerv2_1 {
         membershipService.addOwnerships(GROUPING, ADMIN, TEST_USERNAMES);
         String url = API_BASE_URL + "groupings/" + GROUPING + "/owners/" + String.join(",", TEST_USERNAMES);
         MvcResult mvcResult = mockMvc.perform(delete(url)
-                        .header(CURRENT_USER, ADMIN))
+                        .header(CURRENT_USER_KEY, ADMIN))
                 .andExpect(status().isOk())
                 .andReturn();
         assertNotNull(new ObjectMapper().readValue(mvcResult.getResponse().getContentAsByteArray(), List.class));
@@ -388,7 +388,7 @@ public class TestGroupingsRestControllerv2_1 {
         String description = grouperApiService.descriptionOf(GROUPING);
         String url = API_BASE_URL + "groupings/" + GROUPING + "/description";
         MvcResult mvcResult = mockMvc.perform(put(url)
-                        .header(CURRENT_USER, ADMIN)
+                        .header(CURRENT_USER_KEY, ADMIN)
                         .content(DEFAULT_DESCRIPTION)) // Add body data.
                 .andExpect(status().isOk())
                 .andReturn();
@@ -402,7 +402,7 @@ public class TestGroupingsRestControllerv2_1 {
     public void enableSyncDestTest() throws Exception {
         String url = API_BASE_URL + "groupings/" + GROUPING + "/sync-destination/" + OptType.IN.value() + "/enable";
         MvcResult mvcResult = mockMvc.perform(put(url)
-                        .header(CURRENT_USER, ADMIN))
+                        .header(CURRENT_USER_KEY, ADMIN))
                 .andExpect(status().isOk())
                 .andReturn();
         assertNotNull(new ObjectMapper().readValue(mvcResult.getResponse().getContentAsByteArray(),
@@ -413,7 +413,7 @@ public class TestGroupingsRestControllerv2_1 {
     public void disableSyncDestTest() throws Exception {
         String url = API_BASE_URL + "groupings/" + GROUPING + "/sync-destination/" + OptType.IN.value() + "/disable";
         MvcResult mvcResult = mockMvc.perform(put(url)
-                        .header(CURRENT_USER, ADMIN))
+                        .header(CURRENT_USER_KEY, ADMIN))
                 .andExpect(status().isOk())
                 .andReturn();
         assertNotNull(new ObjectMapper().readValue(mvcResult.getResponse().getContentAsByteArray(),
@@ -424,14 +424,14 @@ public class TestGroupingsRestControllerv2_1 {
     public void enablePreferenceTest() throws Exception {
         String url = API_BASE_URL + "groupings/" + GROUPING + "/preference/" + OptType.IN.value() + "/enable";
         MvcResult mvcResult = mockMvc.perform(put(url)
-                        .header(CURRENT_USER, ADMIN))
+                        .header(CURRENT_USER_KEY, ADMIN))
                 .andExpect(status().isOk())
                 .andReturn();
         assertNotNull(new ObjectMapper().readValue(mvcResult.getResponse().getContentAsByteArray(), List.class));
 
         url = API_BASE_URL + "groupings/" + GROUPING + "/preference/" + OptType.OUT.value() + "/enable";
         mvcResult = mockMvc.perform(put(url)
-                        .header(CURRENT_USER, ADMIN))
+                        .header(CURRENT_USER_KEY, ADMIN))
                 .andExpect(status().isOk())
                 .andReturn();
         assertNotNull(new ObjectMapper().readValue(mvcResult.getResponse().getContentAsByteArray(), List.class));
@@ -439,7 +439,7 @@ public class TestGroupingsRestControllerv2_1 {
         url = API_BASE_URL + "groupings/" + GROUPING + "/preference/" + "badPref" + "/enable";
         try {
             mockMvc.perform(put(url)
-                            .header(CURRENT_USER, ADMIN));
+                            .header(CURRENT_USER_KEY, ADMIN));
             fail("Should not reach here");
         } catch (MissingPathVariableException e) {
             assertNotNull(e);
@@ -451,14 +451,14 @@ public class TestGroupingsRestControllerv2_1 {
     public void disablePreferenceTest() throws Exception {
         String url = API_BASE_URL + "groupings/" + GROUPING + "/preference/" + OptType.IN.value() + "/disable";
         MvcResult mvcResult = mockMvc.perform(put(url)
-                        .header(CURRENT_USER, ADMIN))
+                        .header(CURRENT_USER_KEY, ADMIN))
                 .andExpect(status().isOk())
                 .andReturn();
         assertNotNull(new ObjectMapper().readValue(mvcResult.getResponse().getContentAsByteArray(), List.class));
 
         url = API_BASE_URL + "groupings/" + GROUPING + "/preference/" + OptType.OUT.value() + "/disable";
         mvcResult = mockMvc.perform(put(url)
-                        .header(CURRENT_USER, ADMIN))
+                        .header(CURRENT_USER_KEY, ADMIN))
                 .andExpect(status().isOk())
                 .andReturn();
         assertNotNull(new ObjectMapper().readValue(mvcResult.getResponse().getContentAsByteArray(), List.class));
@@ -466,7 +466,7 @@ public class TestGroupingsRestControllerv2_1 {
         url = API_BASE_URL + "groupings/" + GROUPING + "/preference/" + "badPref" + "/disable";
         try {
             mockMvc.perform(put(url)
-                    .header(CURRENT_USER, ADMIN));
+                    .header(CURRENT_USER_KEY, ADMIN));
             fail("Should not reach here");
         } catch (MissingPathVariableException e) {
             assertNotNull(e);
@@ -478,7 +478,7 @@ public class TestGroupingsRestControllerv2_1 {
     public void getSyncDestinationsTest() throws Exception {
         String url = API_BASE_URL + "groupings/" + GROUPING + "/sync-destinations";
         MvcResult mvcResult = mockMvc.perform(get(url)
-                        .header(CURRENT_USER, ADMIN))
+                        .header(CURRENT_USER_KEY, ADMIN))
                 .andExpect(status().isOk())
                 .andReturn();
         assertNotNull(new ObjectMapper().readValue(mvcResult.getResponse().getContentAsByteArray(), List.class));
@@ -488,7 +488,7 @@ public class TestGroupingsRestControllerv2_1 {
     public void hasAdminPrivsTest() throws Exception {
         String url = API_BASE_URL + "owners";
         MvcResult mvcResult = mockMvc.perform(get(url)
-                        .header(CURRENT_USER, ADMIN))
+                        .header(CURRENT_USER_KEY, ADMIN))
                 .andExpect(status().isOk())
                 .andReturn();
         assertNotNull(new ObjectMapper().readValue(mvcResult.getResponse().getContentAsByteArray(), Boolean.class));
@@ -498,7 +498,7 @@ public class TestGroupingsRestControllerv2_1 {
     public void hasOwnerPrivsTest() throws Exception {
         String url = API_BASE_URL + "admins";
         MvcResult mvcResult = mockMvc.perform(get(url)
-                        .header(CURRENT_USER, ADMIN))
+                        .header(CURRENT_USER_KEY, ADMIN))
                 .andExpect(status().isOk())
                 .andReturn();
         assertNotNull(new ObjectMapper().readValue(mvcResult.getResponse().getContentAsByteArray(), Boolean.class));
@@ -508,7 +508,7 @@ public class TestGroupingsRestControllerv2_1 {
     public void getNumberOfGroupingsTest() throws Exception {
         String url = API_BASE_URL + "owners/" + TEST_USERNAMES.get(0) + "/grouping";
         MvcResult mvcResult = mockMvc.perform(get(url)
-                        .header(CURRENT_USER, ADMIN))
+                        .header(CURRENT_USER_KEY, ADMIN))
                 .andExpect(status().isOk())
                 .andReturn();
         assertNotNull(new ObjectMapper().readValue(mvcResult.getResponse().getContentAsByteArray(), Integer.class));
@@ -518,7 +518,7 @@ public class TestGroupingsRestControllerv2_1 {
     public void getNumberOfMembershipsTest() throws Exception {
         String url = API_BASE_URL + "groupings/members/" + TEST_USERNAMES.get(0) + "/memberships";
         MvcResult mvcResult = mockMvc.perform(get(url)
-                        .header(CURRENT_USER, ADMIN))
+                        .header(CURRENT_USER_KEY, ADMIN))
                 .andExpect(status().isOk())
                 .andReturn();
         assertNotNull(new ObjectMapper().readValue(mvcResult.getResponse().getContentAsByteArray(), Integer.class));
@@ -526,9 +526,9 @@ public class TestGroupingsRestControllerv2_1 {
 
     @Test
     public void isSoleOwnerTest() throws Exception {
-        String url = API_BASE_URL + "/groupings/" + GROUPING + "/owners/" + CURRENT_USER;
+        String url = API_BASE_URL + "/groupings/" + GROUPING + "/owners/" + CURRENT_USER_KEY;
         MvcResult mvcResult = mockMvc.perform(get(url)
-                        .header(CURRENT_USER, ADMIN))
+                        .header(CURRENT_USER_KEY, ADMIN))
                 .andExpect(status().isOk()).andReturn();
         assertNotNull(new ObjectMapper().readValue(mvcResult.getResponse().getContentAsByteArray(), Boolean.class));
     }
